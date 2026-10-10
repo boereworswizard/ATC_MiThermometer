@@ -71,9 +71,6 @@ extern "C" {
 //#define DEVICE_ZG204ZL		50  // HOBEIAN ZG-204ZL PIR + LUX sensor
 #define DEVICE_ZG204ZV		51  // HOBEIAN-ZG-204ZV T&H + LUX + Radar Sensor
 #define DEVICE_TS0201_WING	52  // TS0201_TZ3000_dnpd6ayp, Tuya Zigbee "Temp & Humidity Sensor", Wing TS0201 2xAAA
-//#define DEVICE_ZG204ZL	50  // ZigBee only, HOBEIAN ZG-204ZL PIR + LUX sensor
-#define DEVICE_ZG204ZV		51  // HOBEIAN-ZG-204ZV T&H + LUX + Radar Sensor
-#define DEVICE_TS0201_WING	52  // TS0201_TZ3000_dnpd6ayp, Tuya Zigbee "Temp & Humidity Sensor", Wing TS0201 2xAAA
 //#define DEVICE_ZG223Z			53 // ZigBee only, HOBEIAN ZG223Z, Zigbee "Raindrop Detection Senser" + Lx, CR123A
 //#define DEVICE_DIY_SCD41		54 // reserved: BLE, DIY module TB03F + SCD41, Li(ion, pol,...) battery >= 800 mAh
 //#define DEVICE_ZG204ZV1		55 // ZigBee only, HOBEIAN-ZG-204ZV T&H + LUX + Radar Sensor XBR818
@@ -82,7 +79,7 @@ extern "C" {
 //#define DEVICE_NEXT			58 // ?
 
 #ifndef DEVICE_TYPE
-#define DEVICE_TYPE			DEVICE_LYWSD02MMC
+#define DEVICE_TYPE			DEVICE_LYWSD03MMC
 #endif
 
 // supported services by the device (bits)

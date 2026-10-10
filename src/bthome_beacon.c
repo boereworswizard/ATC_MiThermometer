@@ -195,7 +195,7 @@ void bthome_encrypt_data_beacon(void) {
 	u8 buf[16];
 #if defined(USE_SENSOR_ENS160) && USE_SENSOR_ENS160
 	if(!ens160.flg) {
-		padv_bthome_def_t p = (padv_bthome_def_t)p;
+		padv_bthome_def_t p = (padv_bthome_def_t)&adv_buf.data;
 		p->pid = (u8)adv_buf.send_count;
 		p->head.size = sizeof(adv_bthome_def_t) - sizeof(p->head.size);
 		p->b_id = BtHomeID_battery;
@@ -227,7 +227,7 @@ void bthome_data_beacon(void) {
 	p->p_id = BtHomeID_PacketId;
 #if defined(USE_SENSOR_ENS160) && USE_SENSOR_ENS160
 	if(!ens160.flg) {
-		padv_bthome_def_t p = (padv_bthome_def_t)p;
+		padv_bthome_def_t p = (padv_bthome_def_t)&adv_buf.data;
 		p->pid = (u8)adv_buf.send_count;
 		p->head.size = sizeof(adv_bthome_def_t) - sizeof(p->head.size);
 		p->b_id = BtHomeID_battery;

@@ -93,12 +93,12 @@ const cfg_t def_cfg = {
 #endif
 #elif DEVICE_TYPE == DEVICE_LYWSD03MMC
 		.flg2.adv_flags = true,
-		.advertising_interval = 40, // multiply by 62.5 ms = 2.5 sec
-		.measure_interval = 4, // * advertising_interval = 10 sec
+		.advertising_interval = 80, // multiply by 62.5 ms = 5 sec
+		.measure_interval = 6, // * advertising_interval = 30 sec
 		.min_step_time_update_lcd = 49, //x0.05 sec,   2.45 sec
 		.hw_ver = HW_VER_LYWSD03MMC_B14,
 #if (DEV_SERVICES & SERVICE_HISTORY)
-		.averaging_measurements = 180, // * measure_interval = 10 * 180 = 1800 sec = 30 minutes
+		.averaging_measurements = 60, // * measure_interval = 30 * 60 = 1800 sec = 30 minutes
 #endif
 #elif DEVICE_TYPE == DEVICE_MHO_C401
 		.flg2.adv_flags = true,
@@ -576,7 +576,7 @@ void read_sensors(void) {
 #if (DEV_SERVICES & SERVICE_RDS)
 		rds_input_on();
 #endif
-#if (defined(CHL_ADC1) || defined(CHL_ADC1))
+#if (defined(CHL_ADC1) || defined(CHL_ADC2))
 		if (1)
 #else
 #if (DEV_SERVICES & (SERVICE_THS | SERVICE_IUS | SERVICE_PLM))
@@ -663,7 +663,7 @@ static void suspend_exit_cb(u8 e, u8 *p, int n) {
 	rf_set_power_level_index(cfg.rf_tx_power);
 }
 
-#if !defined(SET_NO_SLEEP_MODE) && ( DEV_SERVICES & SERVICE_KEY) || (DEV_SERVICES & SERVICE_RDS) || (USE_SENSOR_HX71X && SENSOR_HX71X_WAKEAP)
+#if !defined(SET_NO_SLEEP_MODE) && ((DEV_SERVICES & SERVICE_KEY) || (DEV_SERVICES & SERVICE_RDS) || (USE_SENSOR_HX71X))
 _attribute_ram_code_
 static void suspend_enter_cb(u8 e, u8 *p, int n) {
 	(void) e; (void) p; (void) n;
@@ -1116,7 +1116,7 @@ void main_loop(void) {
 #endif
 #if (DEV_SERVICES & SERVICE_LED)
 					// led on
-					gpio_is_output_en(GPIO_LED);
+					gpio_set_output_en(GPIO_LED, 1);
 #if LED_ON
 					gpio_setup_up_down_resistor(GPIO_LED, PM_PIN_PULLUP_10K);
 #else

@@ -91,10 +91,12 @@ u16 get_adc_mv(u32 p_ain) { // ADC_InputPchTypeDef
 	return (adc_average * ADC_BAT_VREF_MV) >> 12; // adc_vref default: 1175 (mV)
 }
 
+#if USE_NI_ZN_BATTERY
+
 #define VBAT2LEVEL_SHL		(32-8) // max level = 256
 #define VBAT2LEVEL_COEF	    ((100 << VBAT2LEVEL_SHL)/(MAX_VBAT_MV - MIN_VBAT_MV))
 
-// 2200..3000 mv - 0..100%
+// 2665..3550 mv - 0..100%
 _attribute_ram_code_
 u8 get_battery_level(u16 battery_mv) {
 	u8 battery_level = 100;
@@ -108,3 +110,30 @@ u8 get_battery_level(u16 battery_mv) {
 	}
 	return battery_level;
 }
+
+#else // USE_NI_ZN_BATTERY
+
+/* CR2032 discharge curve (approximate, light pulsed load).
+ * The cell stays near 2.9..3.0 V for most of its life and then drops quickly,
+ * so a linear 2200..3000 mV scale reports a misleading level.
+ * Piecewise linear: mV (descending) -> %. Kept in RAM: called from ram code. */
+#define BAT_CURVE_POINTS	10
+RAM static u16 bat_curve_mv[BAT_CURVE_POINTS] = {MAX_VBAT_MV, 2950, 2900, 2850, 2800, 2700, 2600, 2500, 2400, MIN_VBAT_MV};
+RAM static u8 bat_curve_level[BAT_CURVE_POINTS] = {100,         90,   75,   55,   40,   25,   15,    8,    4,           0};
+
+_attribute_ram_code_
+u8 get_battery_level(u16 battery_mv) {
+	u32 i, dmv;
+	if (battery_mv >= bat_curve_mv[0])
+		return 100;
+	for (i = 1; i < BAT_CURVE_POINTS; i++) {
+		if (battery_mv > bat_curve_mv[i]) {
+			dmv = bat_curve_mv[i - 1] - bat_curve_mv[i];
+			return bat_curve_level[i] + (u8)((((u32)battery_mv - bat_curve_mv[i])
+				* (u32)(bat_curve_level[i - 1] - bat_curve_level[i]) + (dmv >> 1)) / dmv);
+		}
+	}
+	return 0;
+}
+
+#endif // USE_NI_ZN_BATTERY
